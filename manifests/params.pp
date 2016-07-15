@@ -71,14 +71,16 @@ class ora_rac::params(
   assert_type(Pattern[$size_pattern], $memory_max_target)
                                                    | $e, $a | { fail "memory_max_target ${a}, but should be a valid size. (e.g. 10G, 10M or another number."}
 
-  $virtual_services.each | $key, $value| {
-    # lint:ignore:variable_scope
-    assert_type(Hash[Enum['ip', 'interface_number', 'fwmark', 'send_program', 'scheduler', 'protocol', 'port', 'url', 'servers'], Data], $value) | $e, $a | { fail "${key} is ${a}, but should be a valid hash that should contains following keys: [ip, interface_number, fwmark, send_program, scheduler, protocol, port, url, servers]."}
+  if $virtual_services != undef {
+    $virtual_services.each | $key, $value| {
+      # lint:ignore:variable_scope
+      assert_type(Hash[Enum['ip', 'interface_number', 'fwmark', 'send_program', 'scheduler', 'protocol', 'port', 'url', 'servers'], Data], $value) | $e, $a | { fail "${key} is ${a}, but should be a valid hash that should contains following keys: [ip, interface_number, fwmark, send_program, scheduler, protocol, port, url, servers]."}
 
-    if has_key($value, 'ip') {
-      assert_type(Pattern[$ipaddress_pattern], $value[ip])        | $e, $a | { fail "virtual_services::${key}::ip is ${a}, but should be a valid IP address."}
-    } else {
-      fail "virtual_services::${key} has no ip"
+      if has_key($value, 'ip') {
+        assert_type(Pattern[$ipaddress_pattern], $value[ip])        | $e, $a | { fail "virtual_services::${key}::ip is ${a}, but should be a valid IP address."}
+      } else {
+        fail "virtual_services::${key} has no ip"
+      }
     }
   }
 
