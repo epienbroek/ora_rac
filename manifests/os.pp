@@ -71,6 +71,16 @@ class ora_rac::os (
     $memory_size = $calculated_memory_size
   }
 
+  # On RHEL7 there is no entry in /etc/fstab for /dev/shm by default
+  # Add one manually the prevent the augeas 'ensure_tmpfs_size' task below from failing
+  # Also see: https://access.redhat.com/solutions/1384183
+  if ($::operatingsystemmajrelease == '7') {
+    exec {'add_tmpfs_entry_to_fstab':
+      command => '/bin/echo "tmpfs                   /dev/shm                tmpfs   defaults        0 0" >> /etc/fstab',
+      unless  => '/bin/grep -q /dev/shm /etc/fstab',
+    }
+  }
+
   augeas {'ensure_tmpfs_size':
     context => '/files/etc/fstab',
     changes => [
