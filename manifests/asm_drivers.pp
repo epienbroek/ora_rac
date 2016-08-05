@@ -18,7 +18,6 @@
 #
 class ora_rac::asm_drivers inherits ora_rac::params {
 
-  notify{"asm_packages=$ora_rac::internal::asm_packages":}
   require ora_rac::internal
   require ora_rac::settings
 
