@@ -55,6 +55,7 @@ class ora_rac::settings(
   $asm_disk_group             = 'DATA',     # TODO: Check the difference
   $asm_disk_groups,
   $asm_disks,
+  $oracleasm_scanexclude      = '',
 )
 {
   $valid_id_re      = '^/d+$'
