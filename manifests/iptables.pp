@@ -12,17 +12,17 @@ class ora_rac::iptables inherits ora_rac::params
     }
   }
 
-  firewall { '200 DB listner':
+  firewall { '200 DB listener':
     chain   => $input_chain,
-    port   => 1521,
-    proto  => tcp,
-    action => 'accept',
+    dport   => 1521,
+    proto   => tcp,
+    action  => 'accept',
   }
   firewall { '200 DB gridcontrol':
     chain   => $input_chain,
-    port   => 3872,
-    proto  => tcp,
-    action => 'accept',
+    dport   => 3872,
+    proto   => tcp,
+    action  => 'accept',
   }
 
 
