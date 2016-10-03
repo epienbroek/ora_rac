@@ -14,6 +14,7 @@
 # === Authors
 #
 # Bert Hajee <hajee@moretIA.com>
+# Erik van Pienbroek <evanpienbroek@conclusion.nl>
 #
 #
 define ora_rac::asm_disk(
@@ -66,13 +67,26 @@ define ora_rac::asm_disk(
     part_type => 'primary',
     start     => $start,
     end       => $end,
-  }->
-
-  exec{"/usr/sbin/oracleasm createdisk ${name} ${device}":
-    unless    => "/usr/sbin/oracleasm querydisk -v ${device}",
-    require   => Service['oracleasm'],
   }
 
+  if $ora_rac::params::use_asmlib == false {
+    file{"/etc/udev/rules.d/99-oracle-asmdevices-${name}.rules":
+      ensure  => 'present',
+      content => template('ora_rac/oracle-asmdevices-udev-rule.erb'),
+      require => Partition["$raw_device"],
+      notify  => Exec['reload udev for asm device'],
+    }
 
-
+    if !defined(Exec['reload udev for asm device']) {
+      exec{"reload udev for asm device":
+        command     => '/sbin/udevadm trigger',
+        refreshonly => true,
+      }
+    }
+  } else {
+    exec{"/usr/sbin/oracleasm createdisk ${name} ${device}":
+      unless    => "/usr/sbin/oracleasm querydisk -v ${device}",
+      require   => [ Service['oracleasm'], Partition["$raw_device"] ],
+    }
+  }
 }

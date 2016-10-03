@@ -11,6 +11,7 @@
 # === Authors
 #
 # Bert Hajee <hajee@moretIA.com>
+# Erik van Pienbroek <evanpienbroek@conclusion.nl>
 #
 class ora_rac::params(
   $db_name,
@@ -156,4 +157,6 @@ class ora_rac::params(
   $all_ip_addresses     = $public_ip_addresses + $private_ip_addresses + $vip_ip_addresses
 
   $cluster_vip_names    = suffix($cluster_nodes, '-vip')
+
+  $use_asmlib           = hiera('ora_rac::params::use_asmlib', true)
 }

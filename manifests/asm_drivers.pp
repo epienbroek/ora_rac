@@ -15,8 +15,13 @@
 # === Authors
 #
 # Bert Hajee <hajee@moretIA.com>
+# Erik van Pienbroek <evanpienbroek@conclusion.nl>
 #
-class ora_rac::asm_drivers inherits ora_rac::params {
+class ora_rac::asm_drivers inherits ora_rac::params
+{
+  if $ora_rac::params::use_asmlib == false {
+    fail("Class ora_rac::asm_drivers is included, but this isn't necessary as the parameter use_asmlib is set to false")
+  }
 
   require ora_rac::internal
   require ora_rac::settings
